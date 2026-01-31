@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Buku • Librario</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+
+<body class="dark-mode">
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="logo" onclick="location.href='index.html'" style="cursor: pointer;">
+                <i data-lucide="book-open-check"></i>
+                <h1>Librar<span>io</span></h1>
+            </div>
+            <div class="nav-controls">
+                <a href="index.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Kembali ke Katalog
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loading-state" style="text-align: center; padding: 5rem;">
+            <div class="skeleton" style="max-width: 800px; margin: 0 auto; height: 500px;"></div>
+        </div>
+
+        <div id="detail-card-container" class="hidden">
+            <div class="book-card"
+                style="max-width: 800px; margin: 0 auto; background: var(--glass-bg); backdrop-filter: blur(20px); padding: 4rem;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                    <div>
+                        <h2 id="detail-title"
+                            style="font-size: 3rem; margin-bottom: 0.5rem; -webkit-text-fill-color: initial; background: none; color: white; line-height: 1.1;">
+                            Judul Buku</h2>
+                        <p id="detail-author" style="font-size: 1.5rem; color: var(--text-secondary);"></p>
+                    </div>
+                </div>
+
+                <div class="stats" style="margin-bottom: 3rem;">
+                    <div class="stock-pill" id="detail-stock" style="font-size: 1.25rem; padding: 0.75rem 2rem;">
+                        Stok: 0
+                    </div>
+                </div>
+
+                <div
+                    style="background: rgba(255,255,255,0.03); padding: 2rem; border-radius: 24px; border: 1px solid var(--glass-border); margin-bottom: 3rem;">
+                    <h4
+                        style="color: var(--primary-light); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem; margin-bottom: 1rem;">
+                        Metadata Koleksi</h4>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; color: var(--text-secondary); font-size: 0.9rem;">
+                        <div>
+                            <p style="margin-bottom: 0.5rem;"><i data-lucide="hash"
+                                    style="width: 14px; vertical-align: middle;"></i> ID Buku: <span id="detail-id"
+                                    style="color: #fff;">#</span></p>
+                            <p><i data-lucide="calendar" style="width: 14px; vertical-align: middle;"></i> Ditambahkan:
+                                <span id="detail-created" style="color: #fff;">-</span></p>
+                        </div>
+                        <div>
+                            <p style="margin-bottom: 0.5rem;"><i data-lucide="clock"
+                                    style="width: 14px; vertical-align: middle;"></i> Update Terakhir: <span
+                                    id="detail-updated" style="color: #fff;">-</span></p>
+                            <p><i data-lucide="map-pin" style="width: 14px; vertical-align: middle;"></i> Status Lokasi:
+                                <span style="color: var(--success);">Aktif</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="user-actions">
+                    <button id="borrow-btn" class="btn btn-primary"
+                        style="width: 100%; padding: 1.5rem; font-size: 1.2rem;">
+                        <i data-lucide="zap"></i> Amankan Salinan Sekarang
+                    </button>
+                    <p style="text-align: center; color: var(--text-secondary); font-size: 0.8rem; margin-top: 1rem;">
+                        <i data-lucide="info" style="width: 12px;"></i> Koordinat lokasi Anda akan dicatat secara
+                        otomatis saat menekan tombol di atas.
+                    </p>
+                </div>
+
+                <div id="admin-actions" class="hidden" style="display: flex; gap: 1rem;">
+                    <button id="edit-btn" class="btn btn-secondary" style="flex: 1; padding: 1.5rem;">
+                        <i data-lucide="edit-3"></i> Edit Buku
+                    </button>
+                    <button id="delete-btn" class="btn btn-danger" style="flex: 1; padding: 1.5rem;">
+                        <i data-lucide="trash-2"></i> Hapus Koleksi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = urlParams.get('id');
+            const role = localStorage.getItem('userRole');
+
+            if (!bookId) {
+                location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/books/${bookId}`);
+                if (!response.ok) throw new Error();
+                const book = await response.json();
+
+                // Fill data
+                document.getElementById('detail-id').innerText = '#' + book.id;
+                document.getElementById('detail-title').innerText = book.title;
+                document.getElementById('detail-author').innerText = 'Oleh ' + book.author;
+                document.getElementById('detail-stock').innerText = `Stok Tersedia: ${book.stock} Unit`;
+                if (book.stock <= 0) document.getElementById('detail-stock').classList.add('low');
+
+                document.getElementById('detail-created').innerText = new Date(book.createdAt).toLocaleDateString();
+                document.getElementById('detail-updated').innerText = new Date(book.updatedAt).toLocaleTimeString();
+
+                // Visibility logic
+                if (role === 'admin') {
+                    document.getElementById('admin-actions').classList.remove('hidden');
+                    document.getElementById('user-actions').classList.add('hidden');
+
+                    document.getElementById('edit-btn').onclick = () => location.href = `edit-book.html?id=${book.id}`;
+                    document.getElementById('delete-btn').onclick = async () => {
+                        if (confirm('Hapus buku ini secara permanen?')) {
+                            const res = await fetch(`/api/books/${book.id}`, {
+                                method: 'DELETE',
+                                headers: { 'x-user-role': 'admin' }
+                            });
+                            if (res.ok) {
+                                showToast('Buku telah dihapus');
+                                setTimeout(() => location.href = 'index.html', 1500);
+                            }
+                        }
+                    };
+                } else {
+                    const bBtn = document.getElementById('borrow-btn');
+                    if (book.stock <= 0) {
+                        bBtn.disabled = true;
+                        bBtn.innerText = 'Stok Habis';
+                    } else {
+                        bBtn.onclick = () => borrowBookDetailed(book.id);
+                    }
+                }
+
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('detail-card-container').classList.remove('hidden');
+                lucide.createIcons();
+
+            } catch (err) {
+                showToast('Katalog tidak ditemukan', 'error');
+                setTimeout(() => location.href = 'index.html', 1500);
+            }
+        });
+
+        async function borrowBookDetailed(bookId) {
+            if (!navigator.geolocation) return showToast('GPS Tidak Aktif', 'error');
+
+            showToast('Mendapatkan koordinat...', 'info');
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const { latitude, longitude } = pos.coords;
+                try {
+                    const res = await fetch('/api/borrow', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-user-role': 'user',
+                            'x-user-id': localStorage.getItem('userId')
+                        },
+                        body: JSON.stringify({ bookId, latitude, longitude })
+                    });
+                    if (res.ok) {
+                        showToast('Buku berhasil dipinjam!');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        const err = await res.json();
+                        showToast(err.message, 'error');
+                    }
+                } catch (e) {
+                    showToast('Gagal memproses transaksi', 'error');
+                }
+            }, () => showToast('Izin lokasi ditolak', 'error'));
+        }
+    </script>
+</body>
+
+</html>
