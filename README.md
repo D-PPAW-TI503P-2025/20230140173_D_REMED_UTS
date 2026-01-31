@@ -3,5 +3,7 @@
 <img width="1919" height="1024" alt="Tambah Buku POST" src="https://github.com/user-attachments/assets/1f8f6613-3a07-4448-ad05-e7a4887b7ea0" />
 <img width="1919" height="1028" alt="Update PUT" src="https://github.com/user-attachments/assets/7c748281-e343-498d-8884-99ec20c27eea" />
 <img width="1911" height="1024" alt="hapus buku Delete" src="https://github.com/user-attachments/assets/cbfc92de-c183-47c0-99e4-a7b6554fc32b" />
+<img width="1901" height="1018" alt="pinjam buku User" src="https://github.com/user-attachments/assets/fd649b1c-4023-4b08-996b-26cd7d4ab316" />
+
 
 
