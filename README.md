@@ -6,6 +6,9 @@
 <img width="1901" height="1018" alt="pinjam buku User" src="https://github.com/user-attachments/assets/fd649b1c-4023-4b08-996b-26cd7d4ab316" />
 <img width="1910" height="909" alt="image" src="https://github.com/user-attachments/assets/088bc75f-fb1e-4cee-8d89-9ed30af78f15" />
 <img width="1919" height="968" alt="image" src="https://github.com/user-attachments/assets/1e2bd52d-4a9b-4ce1-9e72-02e6084e8f38" />
+<img width="1920" height="1035" alt="Screenshot 2026-01-31 132516" src="https://github.com/user-attachments/assets/c34f3658-4c1e-4df1-bddb-1d86222b2fa0" />
+<img width="1920" height="1024" alt="Screenshot 2026-01-31 132459" src="https://github.com/user-attachments/assets/e29b7703-4842-45a6-af3f-c10b7ba68152" />
+
 
 
 
