@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Buku • Librario</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+
+<body class="dark-mode">
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="logo" onclick="location.href='index.html'" style="cursor: pointer;">
+                <i data-lucide="book-open-check"></i>
+                <h1>Librar<span>io</span></h1>
+            </div>
+            <div class="nav-controls">
+                <a href="index.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Kembali ke Katalog
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div class="section-title">
+                <div class="title-info">
+                    <h2>Update Detail Buku</h2>
+                    <p>Perbarui informasi atau tambah stok koleksi</p>
+                </div>
+            </div>
+
+            <div class="book-card" style="background: var(--glass-bg); backdrop-filter: blur(20px);">
+                <form id="edit-book-form">
+                    <input type="hidden" id="book-id">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label>Judul Buku</label>
+                        <input type="text" id="title" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label>Penulis</label>
+                        <input type="text" id="author" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label>Jumlah Stok</label>
+                        <input type="number" id="stock" required min="0">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" onclick="location.href='index.html'" class="btn btn-secondary"
+                            style="flex: 1;">Batal</button>
+                        <button type="submit" class="btn btn-primary" style="flex: 2;">Konfirmasi Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = urlParams.get('id');
+
+            if (!bookId) {
+                location.href = 'index.html';
+                return;
+            }
+
+            // Fetch current data
+            try {
+                const response = await fetch(`/api/books/${bookId}`);
+                if (!response.ok) throw new Error();
+                const book = await response.json();
+
+                document.getElementById('book-id').value = book.id;
+                document.getElementById('title').value = book.title;
+                document.getElementById('author').value = book.author;
+                document.getElementById('stock').value = book.stock;
+            } catch (err) {
+                showToast('Gagal memuat data buku', 'error');
+                setTimeout(() => location.href = 'index.html', 1500);
+            }
+
+            // Handle edit submit
+            document.getElementById('edit-book-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Menyimpan...';
+
+                const data = {
+                    title: document.getElementById('title').value,
+                    author: document.getElementById('author').value,
+                    stock: parseInt(document.getElementById('stock').value)
+                };
+
+                try {
+                    const role = localStorage.getItem('userRole') || 'user';
+                    const response = await fetch(`/api/books/${bookId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-user-role': role
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        showToast('Buku berhasil diupdate!', 'success');
+                        setTimeout(() => location.href = 'index.html', 1500);
+                    } else {
+                        const err = await response.json();
+                        showToast(err.message, 'error');
+                    }
+                } catch (err) {
+                    showToast('Kesalahan jaringan', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Konfirmasi Perubahan';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

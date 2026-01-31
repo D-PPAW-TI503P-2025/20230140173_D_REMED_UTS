@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login • Librario</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+
+<body class="dark-mode">
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="container" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+        <div class="book-card"
+            style="max-width: 450px; width: 100%; padding: 3rem; background: var(--glass-bg); backdrop-filter: blur(25px); border-radius: 32px;">
+            <div class="logo" style="justify-content: center; margin-bottom: 2rem; font-size: 2.5rem;">
+                <i data-lucide="book-open-check"></i>
+                <h1>Librar<span>io</span></h1>
+            </div>
+
+            <h2
+                style="font-size: 1.5rem; text-align: center; margin-bottom: 2rem; -webkit-text-fill-color: initial; background: none; color: white;">
+                Selamat Datang Kembali</h2>
+
+            <form id="login-form">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Pilih Role</label>
+                    <select id="loginRole"
+                        style="width: 100%; padding: 1rem; border-radius: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); color: white; font-weight: 600;">
+                        <option value="user">User Mode</option>
+                        <option value="admin">Admin Mode</option>
+                    </select>
+                </div>
+
+                <div id="id-group" class="form-group" style="margin-bottom: 2.5rem;">
+                    <label>User ID</label>
+                    <input type="number" id="loginId" value="1" placeholder="Masukkan ID Anda"
+                        style="width: 100%; padding: 1.1rem; border-radius: 16px;">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1.25rem;">
+                    Akses Dashboard <i data-lucide="arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+
+    <script src="script.js"></script>
+    <script>
+        const roleSelect = document.getElementById('loginRole');
+        const idGroup = document.getElementById('id-group');
+
+        roleSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'admin') {
+                idGroup.style.display = 'none';
+            } else {
+                idGroup.style.display = 'block';
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const role = roleSelect.value;
+            const id = document.getElementById('loginId').value || '1';
+
+            localStorage.setItem('userRole', role);
+            localStorage.setItem('userId', id);
+
+            location.href = 'index.html';
+        });
+    </script>
+</body>
+
+</html>

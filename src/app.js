@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 const sequelize = require('./models/index');
 const bookRoutes = require('./routes/bookRoutes');
@@ -9,6 +10,12 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Explicitly serve index.html for root path as a backup
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 
 // Routes
 app.use('/api/books', bookRoutes);

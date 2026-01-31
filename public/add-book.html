@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Buku Baru • Librario</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+
+<body class="dark-mode">
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="logo" onclick="location.href='index.html'" style="cursor: pointer;">
+                <i data-lucide="book-open-check"></i>
+                <h1>Librar<span>io</span></h1>
+            </div>
+            <div class="nav-controls">
+                <a href="index.html" class="btn btn-secondary">
+                    <i data-lucide="arrow-left"></i> Kembali ke Katalog
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div class="section-title">
+                <div class="title-info">
+                    <h2>Tambah Buku Baru</h2>
+                    <p>Masukkan data buku ke dalam koleksi perpustakaan</p>
+                </div>
+            </div>
+
+            <div class="book-card" style="background: var(--glass-bg); backdrop-filter: blur(20px);">
+                <form id="add-book-form">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label>Judul Buku</label>
+                        <input type="text" id="title" required placeholder="Contoh: Laskar Pelangi">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label>Penulis</label>
+                        <input type="text" id="author" required placeholder="Nama penulis buku...">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label>Jumlah Stok (Integer)</label>
+                        <input type="number" id="stock" required min="0" value="1">
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" onclick="location.href='index.html'" class="btn btn-secondary"
+                            style="flex: 1;">Batal</button>
+                        <button type="submit" class="btn btn-primary" style="flex: 2;">Simpan Koleksi Baru</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="script.js"></script>
+    <script>
+        // Specific logic for add page
+        document.getElementById('add-book-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Menyimpan...';
+
+            const data = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                stock: parseInt(document.getElementById('stock').value)
+            };
+
+            try {
+                // Get role from localStorage (set by script.js)
+                const role = localStorage.getItem('userRole') || 'user';
+
+                const response = await fetch('/api/books', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-role': role
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showToast('Buku berhasil ditambahkan!', 'success');
+                    setTimeout(() => location.href = 'index.html', 1500);
+                } else {
+                    const err = await response.json();
+                    showToast(err.message, 'error');
+                }
+            } catch (err) {
+                showToast('Kesalahan jaringan', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Simpan Koleksi Baru';
+            }
+        });
+    </script>
+</body>
+
+</html>
