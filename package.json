@@ -1,0 +1,28 @@
+{
+  "name": "remedial_paw",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000T\u0000u\u0000g\u0000a\u0000s\u0000 \u0000R\u0000e\u0000m\u0000e\u0000d\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/D-PPAW-TI503P-2025/20230140173_D_REMED_UTS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/D-PPAW-TI503P-2025/20230140173_D_REMED_UTS/issues"
+  },
+  "homepage": "https://github.com/D-PPAW-TI503P-2025/20230140173_D_REMED_UTS#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mysql2": "^3.16.2",
+    "sequelize": "^6.37.7"
+  }
+}
